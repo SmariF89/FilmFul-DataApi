@@ -1,0 +1,266 @@
+Smári Freyr Guðmundsson - February 5th 2020
+
+This document explains the capabilities of the user interface provided by FilmFul
+along with the routes that are available in the web version.
+
+Routes
+
+  /
+  /movies
+      -> Web displays all movies, paged.
+         Each item contains all info, similarly as IMDB.
+           # User is able to sort them in many ways.
+             Sorting is done client-side via JavaScript.
+           # The items of the current page are sorted.
+             When next page is clicked, next movies are
+             loaded and subsequently sorted.
+      -> Actors are clickable links, leads to /actors/id
+      -> Directors are clickable links, leads to /directors/id
+      -> Movies are clickable links, leads to /movies/id
+      => API returns a requested page of a requested size and index.
+         All movies, all info.
+         # api/?pageNumber=x?pageSize=y
+         # api/movies/?pageNumber=x?pageSize=y
+
+  /id
+  /movies/id
+    -> Shows all info as well but in 'full-screen' mode. 
+       Information is displayed in fancier way.
+    -> Actors are clickable links, leads to /actors/id
+    -> Directors are clickable links, leads to /directors/id
+    => API returns a single movie by id.
+       Single movie, all info.
+       # api/movies/id
+
+  /actors
+    -> Web displays all actors, along with movies they have
+       appeared in. Paged, similarly to movies and directors.
+       Each item contains actor name, list of movie titles 
+       (sorted descending by imdb_rating), movie imdb_rating, 
+       average movie imdb_rating, movie release year, number of 
+       films and directors worked with.
+       Each movie title has the release year parenthesized.
+    -> Actors are clickable links, leads to /actors/id
+    -> Directors are clickable links, leads to /directors/id
+    -> Movies are clickable links, leads to /movies/id
+    => API returns a requested page of a requested size and index.
+       All actors. For each actor, his name, number of films, a 
+       list of his movies (sorted descending by imdb_rating), each 
+       of his movies' imdb_rating, average movie imdb_rating, release 
+       year, directors.
+       # api/actors/?pageNumber=x?pageSize=y
+
+  /actors/id
+    -> Web displays actor's name in page header. Subheader contains
+       average_imbdb_rating, number_of_films and directors. Underneath
+       all that is a list of his movies, with all information, similarly
+       as in /movies but his movies only.
+    -> The movies are sortable and filterable as in /movies.
+    -> Actors are clickable links, leads to /actors/id
+    -> Directors are clickable links, leads to /directors/id
+    -> Movies are clickable links, leads to /movies/id
+    => API returns a single actor by id.
+       Single actor, all movie info of his movies.
+       # api/actors/id
+
+  /directors
+    -> Web displays all directors, along with movies they have
+       directed. Paged, similarly to actors and movies.
+       Each item contains director name, list of movie titles
+       (sorted descending by imdb_rating), movie imdb_rating, 
+       average movie imdb_rating, movie release year, actors worked
+       with, number of films directed and possibly a co-director(s).
+       Each movie title has the release year parenthesized.
+       If there was more than one director, each such movie has
+       a notifier like: "Somefilm(YYYY) (Co-director: *name*)".
+    -> Actors are clickable links, leads to /actors/id
+    -> Directors are clickable links, leads to /directors/id
+    -> Movies are clickable links, leads to /movies/id
+    => API returns a requested page of a requested size and index.
+       All directors. For each director, his name, actors, a list
+       of his movies (sorted descending by imdb_rating), each of his movies' 
+       imdb_rating, average movie imdb_rating, release year, number of films
+       and possible co-director(s).
+       # api/directors/?pageNumber=x?pageSize=y
+
+  /directors/id
+    -> Web displays director's name in page header. Underneath is a list
+       of his movies, with all information, similarly as in /movies but
+       his movies only.
+    -> The movies are sortable and filterable as in /movies.
+    -> Actors are clickable links, leads to /actors/id
+    -> Directors are clickable links, leads to /directors/id
+    -> Movies are clickable links, leads to /movies/id
+    => API returns a single director by id.
+       Single director, all movie info of his movies.
+    # api/directors/id
+
+Sorting and filtering
+
+  Movies (/, /movies, /actors/id, directors/id)
+
+    Sorting and filtering movies uses all the attributes of the movie object
+    as it is described in the database.
+
+    The following attributes of a movie can be used to sort, ascending or descending:
+      - title
+      - duration
+      - release_year
+      - rating_imdb
+      - rating_metascore
+      - gross
+      - vote_count
+
+    The following attributes of a movie can be used to filter by range, sorted ascending or descending:
+      - duration
+      - release_year
+      - rating_imdb
+      - rating_metascore
+      - gross
+      - vote_count
+        -> E.g. movies released between 1985 and 1995, sorted ascending by release_year.
+        -> E.g. movies released between 1985 and 1995, sorted descending by title.
+
+    Filtering titles
+      A filter textbox can be used to filter movies by title using 'contains' or 'starts with'.
+      It can, for example, be used to get all currently loaded movies, with the current sorting 
+      and other filtering settings, that start with the letter 'B' or movies where the title 
+      contains 'man'.
+
+    Filtering description
+      Similar as with the titles except should only be a 'contains' filter. Current sorting
+      and other filtering settings are not affected.
+
+    Filtering certificate
+      Checkboxes can be checked to display only movies with desired rating certificates. Current
+      sorting and other filtering settings are not affected.
+
+    Filtering actors
+      This is similar to when entering known email addresses in the 'To' field in Gmail.
+      A textbox can be used to enter actors' names. As a name string is entered, a list of valid
+      actor names should appear with names that 'contain' that string. The user can click the name
+      he desires or type the full valid name and press enter (case insensitive). 
+      If a name is clicked upon, the name will visually be added to a 'Actor filter field'.
+      If a name is entered correctly and the enter key is pressed, the name will visually be added 
+      to a 'Actor filter field'.
+      If a name is entered INcorrectly and the enter key is pressed, the name will not be added to a
+      'Actor filter field' and the string will fade to red for a moment.
+      Current sorting and other filtering settings are not affected.
+
+    Filtering directors
+      Similar to how actors filtering works. Current sorting and other filtering settings are not affected.
+
+    Filtering genres
+      There is no route for genres. Everything, however, can
+      be filtered by genre.
+        # All movies of genre x.                           (/, /movies)
+        # All actors that appear in movies of genre x.     (/actors)
+        # All movies of genre x in which an actor appears  (/actors/id)
+        # All directors that direct movies of genre x.     (/directors)
+        # All movies of genre x which a director directed  (/directors/id)
+
+      Checkboxes can be checked to display only movies of desired genre. Current
+      sorting and other filtering settings are not affected.
+
+
+  Actors (/actors)
+
+    Sorting and filtering actors uses the following attributes of both actors and movies:
+      - actor->name
+      - movie->title
+      - movie->imdb_rating
+      - actor->average_imbdb_rating (Not a database attribute but calculated by API)
+      - movie->release_year
+      - actor->number_of_films      (Not a database attribute but calculated by API)
+      - actor->directors            (Not a database attribute but calculated by API)
+
+    The following attributes of an actor can be used to sort, ascending or descending:
+      - name
+      - average_imbdb_rating
+      - number_of_films
+
+    The following attributes of an actor can be used to filter by range, sorted ascending or descending:
+      - average_imbdb_rating
+      - number_of_films
+        -> E.g. actors with acting credits in between 3 and 10 films, sorted ascending by number_of_films.
+        -> E.g. actors with acting credits in between 4 and 4 (4)films, sorted descending by name.
+        -> E.g. actors with average imdb rating between 7 and 9, sorted descending by number_of_films.
+
+    Filtering names
+      A filter textbox can be used to filter actors by name using 'contains' or 'starts with'.
+      It can, for example, be used to get all currently loaded actors, with the current sorting 
+      and other filtering settings, that start with the letter 'B' or actors where the name 
+      contains 'O''.
+
+    Filtering titles
+      This is similar to when entering known email addresses in the 'To' field in Gmail.
+      A textbox can be used to enter movies' title. As a title string is entered, a list of valid
+      movie titles should appear with titles that 'contain' that string. The user can click the title
+      he desires or type the full valid title and press enter (case insensitive). 
+      If a title is clicked upon, the title will visually be added to a 'Movie filter field'.
+      If a title is entered correctly and the enter key is pressed, the movie will visually be added 
+      to a 'Movie filter field'.
+      If a title is entered INcorrectly and the enter key is pressed, the movie will not be added to a
+      'Movie filter field' and the string will fade to red for a moment.
+      This will filter a union of all actors that appear in the movies that are in the 'Movie filter 
+      field'
+      Current sorting and other filtering settings are not affected.
+
+    Filtering by directors worked with
+      Similar to how title filtering works. Returns all actors that worked with a certain director(s).
+      Current sorting and other filtering settings are not affected.
+
+
+  Directors (/directors)
+
+    Sorting and filtering directors uses the following attributes of both directors and movies:
+      - director->name
+      - movie->title
+      - movie->imdb_rating
+      - director->average_imbdb_rating  (Not a database attribute but calculated by API)
+      - movie->release_year
+      - movie->co_directors             (Not a database attribute but calculated by API)
+      - director->number_of_films       (Not a database attribute but calculated by API)
+      - director->actors                (Not a database attribute but calculated by API)
+
+    The following attributes of a director can be used to sort, ascending or descending:
+      - name
+      - average_imbdb_rating
+      - number_of_films
+
+    The following attributes of a director can be used to filter by range, sorted ascending or descending:
+      - average_imbdb_rating
+      - number_of_films
+        -> E.g. directors that have directed between 3 and 10 films, sorted ascending by number_of_films.
+        -> E.g. directors that have directed between 4 and 4 (4)films, sorted descending by name.
+        -> E.g. directors with average imdb rating between 7 and 9, sorted descending by number_of_films.
+
+    Filtering names
+      A filter textbox can be used to filter directors by name using 'contains' or 'starts with'.
+      It can, for example, be used to get all currently loaded actors, with the current sorting 
+      and other filtering settings, that start with the letter 'B' or actors where the name 
+      contains 'son'.
+
+    Filtering titles
+      This is similar to when entering known email addresses in the 'To' field in Gmail.
+      A textbox can be used to enter movies' title. As a title string is entered, a list of valid
+      movie titles should appear with titles that 'contain' that string. The user can click the title
+      he desires or type the full valid title and press enter (case insensitive). 
+      If a title is clicked upon, the title will visually be added to a 'Movie filter field'.
+      If a title is entered correctly and the enter key is pressed, the movie will visually be added 
+      to a 'Movie filter field'.
+      If a title is entered INcorrectly and the enter key is pressed, the movie will not be added to a
+      'Movie filter field' and the string will fade to red for a moment.
+      This will filter a union of all directors that direct the movies that are in the 'Movie filter 
+      field'
+      Current sorting and other filtering settings are not affected.
+
+    Filtering by actors worked with
+      Similar to how title filtering works. Returns all directors that worked with a certain actor(s).
+      Current sorting and other filtering settings are not affected.
+
+
+Possible future additions:
+
+  - Sort actors by how many directors they have worked with.
+  - Sort directors by how many actors they have worked with.
