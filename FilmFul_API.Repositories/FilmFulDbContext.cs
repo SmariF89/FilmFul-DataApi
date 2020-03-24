@@ -25,7 +25,7 @@ namespace FilmFul_API.Repositories
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseNpgsql("Host=filmful-aws-ireland-instance.ca8dhdsjmyps.eu-west-1.rds.amazonaws.com; Port=5432; Database=filmful_database; Username=clover89; Password=***************");
+                optionsBuilder.UseNpgsql("");
             }
         }
 
