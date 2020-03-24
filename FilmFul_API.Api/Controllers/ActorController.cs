@@ -10,16 +10,18 @@ namespace FilmFul_API.Api.Controllers
         private readonly ActorService actorService = new ActorService();
 
         // GET api/actor
-        [HttpGet("")]
-        public IActionResult GetAllActors()
+        [HttpGet]
+        [Route("")]
+        public IActionResult GetAllActors([FromQuery] int pageSize = 10, [FromQuery] int pageIndex = 0)
         {
-            var allActors = actorService.GetAllActors();
-            if (allActors == null) { return StatusCode(404); }
-            return Ok(allActors);
+            var actorsResult = actorService.GetAllActors(pageSize, pageIndex);
+            if (actorsResult.Item2 == 0) { return Ok(actorsResult.Item1); }
+            else { return StatusCode(actorsResult.Item2); }
         }
 
         // GET api/actor/5
-        [HttpGet("{id}")]
+        [HttpGet]
+        [Route("{id}")]
         public IActionResult GetActorById(int id)
         {
             var actorById = actorService.GetActorById(id);

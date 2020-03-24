@@ -8,9 +8,9 @@ namespace FilmFul_API.Services
     {
         private readonly ActorRepository actorRepository = new ActorRepository();
 
-        public IEnumerable<Actor> GetAllActors()
+        public (IEnumerable<Actor>, int) GetAllActors(int pageSize, int pageIndex)
         {
-            return actorRepository.GetAllActors();
+            return actorRepository.GetAllActors(pageSize, pageIndex);
         }
 
         public Actor GetActorById(int id)
