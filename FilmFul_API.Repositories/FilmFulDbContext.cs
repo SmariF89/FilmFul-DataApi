@@ -25,7 +25,10 @@ namespace FilmFul_API.Repositories
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseNpgsql("");
+                var connStr = "";
+                try { connStr = System.IO.File.ReadAllText("../FilmFul_API.Repositories/ConnectionString.txt"); }
+                catch(System.Exception ex) { throw new System.Exception("Failed to read connection string from file.", ex); }
+                optionsBuilder.UseNpgsql(connStr);
             }
         }
 

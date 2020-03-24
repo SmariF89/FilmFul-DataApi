@@ -16,7 +16,8 @@ namespace FilmFul_API.Repositories
             if(rangeOkay == 0)
             {
                 return ((from a in filmFulDbContext.Actor 
-                        select a).Skip(pageIndex * pageSize).Take(pageSize), rangeOkay);
+                        select a).Skip(pageIndex * pageSize)
+                            .Take(pageSize), rangeOkay);
             }
             else
             {
