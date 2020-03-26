@@ -23,6 +23,7 @@ namespace FilmFul_API.Repositories
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            // TODO: Move connection string to an environment variable.
             if (!optionsBuilder.IsConfigured)
             {
                 var connStr = "";

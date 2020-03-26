@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using FilmFul_API.Models.Entities;
+using FilmFul_API.Models.Dtos;
 using FilmFul_API.Repositories;
 
 namespace FilmFul_API.Services
@@ -8,12 +8,12 @@ namespace FilmFul_API.Services
     {
         private readonly ActorRepository actorRepository = new ActorRepository();
 
-        public (IEnumerable<Actor>, int) GetAllActors(int pageSize, int pageIndex)
+        public (IEnumerable<ActorDto>, int) GetAllActors(int pageSize, int pageIndex)
         {
             return actorRepository.GetAllActors(pageSize, pageIndex);
         }
 
-        public Actor GetActorById(int id)
+        public ActorDto GetActorById(int id)
         {
             return actorRepository.GetActorById(id);
         }

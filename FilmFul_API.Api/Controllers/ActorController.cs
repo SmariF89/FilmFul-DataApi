@@ -9,7 +9,7 @@ namespace FilmFul_API.Api.Controllers
     {
         private readonly ActorService actorService = new ActorService();
 
-        // GET api/actor
+        // GET api/actors
         [HttpGet]
         [Route("")]
         public IActionResult GetAllActors([FromQuery] int pageSize = 10, [FromQuery] int pageIndex = 0)
@@ -19,7 +19,7 @@ namespace FilmFul_API.Api.Controllers
             else { return StatusCode(actorsResult.Item2); }
         }
 
-        // GET api/actor/5
+        // GET api/actors/5
         [HttpGet]
         [Route("{id}")]
         public IActionResult GetActorById(int id)
@@ -27,6 +27,22 @@ namespace FilmFul_API.Api.Controllers
             var actorById = actorService.GetActorById(id);
             if (actorById == null) { return StatusCode(404); }        
             return Ok(actorById);
+        }
+
+        // GET api/actor/5/movies
+        [HttpGet]
+        [Route("{id}/movies")]
+        public IActionResult GetActorFilmsByActorId(int id)
+        {
+            return StatusCode(404);
+        }
+
+        // GET api/actor/5/directors
+        [HttpGet]
+        [Route("{id}/directors")]
+        public IActionResult GetActorDirectorsByActorId(int id)
+        {
+            return StatusCode(404);
         }
     }
 }
