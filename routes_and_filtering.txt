@@ -47,7 +47,7 @@ Routes
        All actors. For each actor, his name, number of films, a 
        list of his movies (sorted descending by imdb_rating), each 
        of his movies' imdb_rating, average movie imdb_rating, release 
-       year, directors.
+       year and director affiliations.
        # api/actors/?pageNumber=x?pageSize=y
 
   /actors/id

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using FilmFul_API.Models.Entities;
 using System.Linq;
 using FilmFul_API.Repositories.Extensions;
+using FilmFul_API.Models.Dtos;
 
 namespace FilmFul_API.Repositories
 {
@@ -9,15 +9,22 @@ namespace FilmFul_API.Repositories
     {
         private readonly FilmFulDbContext filmFulDbContext = new FilmFulDbContext();
 
-        public (IEnumerable<Actor>, int) GetAllActors(int pageSize, int pageIndex)
+        public (IEnumerable<ActorDto>, int) GetAllActors(int pageSize, int pageIndex)
         {
             int rangeOkay = Utilities.checkRange(pageSize, pageIndex, filmFulDbContext.Actor.Count());
-
+            
             if(rangeOkay == 0)
             {
-                return ((from a in filmFulDbContext.Actor 
-                        select a).Skip(pageIndex * pageSize)
-                            .Take(pageSize), rangeOkay);
+                return (
+                            DataTypeConversionUtils.ActorToActorDto
+                            (
+                                ((from a in filmFulDbContext.Actor 
+                                select a)
+                                    .Skip(pageIndex * pageSize)
+                                    .Take(pageSize)
+                                )
+                            ), rangeOkay
+                        );
             }
             else
             {
@@ -25,9 +32,28 @@ namespace FilmFul_API.Repositories
             }
         }
 
-        public Actor GetActorById(int id)
+        public ActorDto GetActorById(int id)
         {
-            return filmFulDbContext.Actor.Where(a => a.Id == id).SingleOrDefault();
+            return DataTypeConversionUtils.ActorToActorDto
+                (
+                    filmFulDbContext.Actor
+                        .Where(a => a.Id == id)
+                        .SingleOrDefault()
+                );
+        }
+
+        public MovieDto GetActorMoviesByActorId(int id)
+        {
+            // This query returns all movies which actor with Id == id stars in.
+            var query = (from actor in filmFulDbContext.Actor
+                         where actor.Id == id
+                         join action in filmFulDbContext.Action on actor.Id equals action.ActorId
+                         join movie in filmFulDbContext.Movie on action.MovieId equals movie.Id
+                         select new { ActorFilms = movie.Title });
+
+            foreach (var film in query) { System.Console.WriteLine("MOVIES: " + film.ActorFilms); }
+
+            return null;
         }
     }
 }
