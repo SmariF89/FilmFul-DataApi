@@ -18,5 +18,17 @@ namespace FilmFul_API.Repositories.Extensions
             Id = actor.Id,
             Name = actor.Name
         };
+
+        public static IEnumerable<DirectorDto> DirectorToDirectorDto(IEnumerable<Director> Directors) => Directors.Select(director => new DirectorDto
+        {
+            Id = director.Id,
+            Name = director.Name
+        });
+
+        public static DirectorDto DirectorToDirectorDto(Director director) => new DirectorDto
+        {
+            Id = director.Id,
+            Name = director.Name
+        };
     }
 }
