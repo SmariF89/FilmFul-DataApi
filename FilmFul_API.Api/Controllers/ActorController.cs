@@ -29,7 +29,7 @@ namespace FilmFul_API.Api.Controllers
             return Ok(actorById);
         }
 
-        // GET api/actor/5/movies
+        // GET api/actors/5/movies
         [HttpGet]
         [Route("{id}/movies")]
         public IActionResult GetActorFilmsByActorId(int id)
@@ -37,7 +37,7 @@ namespace FilmFul_API.Api.Controllers
             return StatusCode(404);
         }
 
-        // GET api/actor/5/directors
+        // GET api/actors/5/directors
         [HttpGet]
         [Route("{id}/directors")]
         public IActionResult GetActorDirectorsByActorId(int id)
