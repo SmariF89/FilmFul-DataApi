@@ -6,8 +6,8 @@ namespace FilmFul_API.Repositories.Extensions
         // These include GetAllActors, GetAllDirectors and GetAllMovies.
         public static int checkRange(int pageSize, int pageIndex, int itemCount)
         {
-            if (pageSize == 0) { return 400; }      // This check is specificially to avoid zero-divison as well as to detect bad input.
-            int maxIndex = itemCount / pageSize;
+            if (pageSize == 0) { return 400; }                  // This check is specificially to avoid zero-divison as well as to detect bad input.
+            int maxIndex = (itemCount / pageSize) - 1;          // The index is zero-based.
 
             if      (itemCount == 0)        { return 404; }     // Not found - Resource is empty for some reason.
             else if (pageSize > 100)        { return 413; }     // Payload too large - Max #items is 100.

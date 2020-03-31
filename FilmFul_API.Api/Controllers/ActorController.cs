@@ -32,9 +32,11 @@ namespace FilmFul_API.Api.Controllers
         // GET api/actors/5/movies
         [HttpGet]
         [Route("{id}/movies")]
-        public IActionResult GetActorFilmsByActorId(int id)
+        public IActionResult GetActorMoviesByActorId(int id)
         {
-            return StatusCode(404);
+            var actorMovies = actorService.GetActorMoviesByActorId(id);
+            if (actorMovies == null) { return StatusCode(404); }
+            return Ok(actorMovies);
         }
 
         // GET api/actors/5/directors
