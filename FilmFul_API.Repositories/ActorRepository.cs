@@ -42,6 +42,22 @@ namespace FilmFul_API.Repositories
                 );
         }
 
+        public IEnumerable<DirectorDto> GetActorDirectorsByActorId(int id)
+        {
+            return DataTypeConversionUtils.DirectorToDirectorDto
+            (
+                (from director in filmFulDbContext.Director
+                    join direction in filmFulDbContext.Direction on director.Id equals direction.DirectorId
+                        join movie in filmFulDbContext.Movie on direction.MovieId equals movie.Id
+                            join action in filmFulDbContext.Action on movie.Id equals action.MovieId
+                                join actor in filmFulDbContext.Actor on action.ActorId equals actor.Id
+                                where actor.Id == id
+                                select director)
+                                    .Distinct()
+                                    .OrderBy(di => di.Name)
+            );
+        }
+
         public MovieDto GetActorMoviesByActorId(int id)
         {
             // This query returns all movies which actor with Id == id stars in.
