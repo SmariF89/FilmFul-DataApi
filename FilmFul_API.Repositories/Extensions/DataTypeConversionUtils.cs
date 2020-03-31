@@ -7,7 +7,7 @@ namespace FilmFul_API.Repositories.Extensions
 {
     public static class DataTypeConversionUtils
     {
-        public static IEnumerable<ActorDto> ActorToActorDto(IEnumerable<Actor> Actors) => Actors.Select(actor => new ActorDto
+        public static IEnumerable<ActorDto> ActorToActorDto(IEnumerable<Actor> actors) => actors.Select(actor => new ActorDto
         {
             Id = actor.Id,
             Name = actor.Name
@@ -19,7 +19,7 @@ namespace FilmFul_API.Repositories.Extensions
             Name = actor.Name
         };
 
-        public static IEnumerable<DirectorDto> DirectorToDirectorDto(IEnumerable<Director> Directors) => Directors.Select(director => new DirectorDto
+        public static IEnumerable<DirectorDto> DirectorToDirectorDto(IEnumerable<Director> directors) => directors.Select(director => new DirectorDto
         {
             Id = director.Id,
             Name = director.Name
@@ -29,6 +29,36 @@ namespace FilmFul_API.Repositories.Extensions
         {
             Id = director.Id,
             Name = director.Name
+        };
+
+        public static IEnumerable<MovieDto> MovieToMovieDto(IEnumerable<Movie> movies, bool poster) => movies.Select(movie => new MovieDto
+        {
+            Id = movie.Id,
+            Title = movie.Title,
+            Poster = poster ? movie.Poster : null,
+            Description = movie.Description,
+            Duration = movie.Duration,
+            ReleaseYear = movie.ReleaseYear,
+            RatingImdb = movie.RatingImdb,
+            RatingMetascore = movie.RatingMetascore,
+            Certificate = movie.Certificate,
+            Gross = movie.Gross,
+            VoteCount = movie.VoteCount
+        });
+
+        public static MovieDto MovieToMovieDto(Movie movie) => new MovieDto
+        {
+            Id = movie.Id,
+            Title = movie.Title,
+            Poster = movie.Poster,
+            Description = movie.Description,
+            Duration = movie.Duration,
+            ReleaseYear = movie.ReleaseYear,
+            RatingImdb = movie.RatingImdb,
+            RatingMetascore = movie.RatingMetascore,
+            Certificate = movie.Certificate,
+            Gross = movie.Gross,
+            VoteCount = movie.VoteCount
         };
     }
 }

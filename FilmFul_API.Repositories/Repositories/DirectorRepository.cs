@@ -26,20 +26,19 @@ namespace FilmFul_API.Repositories
                             ), rangeOkay
                         );
             }
-            else
-            {
-                return (null, rangeOkay);
-            }
+            else { return (null, rangeOkay); }
         }
 
         public DirectorDto GetDirectorById(int id)
         {
             return DataTypeConversionUtils.DirectorToDirectorDto
-                (
-                    filmFulDbContext.Director
-                        .Where(d => d.Id == id)
-                        .SingleOrDefault()
-                );
+            (
+                filmFulDbContext.Director
+                    .Where(d => d.Id == id)
+                    .SingleOrDefault()
+            );
+
+            // TODO: Change implementation as is is done in ActorRepository.GetActorById.
         }
         
         public IEnumerable<ActorDto> GetDirectorActorsByDirectorId(int id)
@@ -56,6 +55,8 @@ namespace FilmFul_API.Repositories
                                     .Distinct()
                                     .OrderBy(ac => ac.Name)
             );
+
+            // TODO: Change implementation as is is done in ActorRepository.GetActorDirectorsByActorId.
         }
 
         public MovieDto GetDirectorMoviesByDirectorId(int id)
