@@ -42,7 +42,9 @@ namespace FilmFul_API.Api.Controllers
         [Route("{id}/directors")]
         public IActionResult GetActorDirectorsByActorId(int id)
         {
-            return StatusCode(404);
+            var actorDirectors = actorService.GetActorDirectorsByActorId(id);
+            if (actorDirectors == null) { return StatusCode(404); }
+            return Ok(actorDirectors);
         }
     }
 }
