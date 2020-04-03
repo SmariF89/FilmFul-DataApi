@@ -40,5 +40,17 @@ namespace FilmFul_API.Repositories.Repositories
 
             return movieById == null ? null :  DataTypeConversionUtils.MovieToMovieDto(movieById);
         }
+
+        public IEnumerable<ActorDto> GetMovieActorsByMovieId(int id)
+        {
+            var movieActors = (from actor in filmFulDbContext.Actor
+                                   join action in filmFulDbContext.Action on actor.Id equals action.ActorId
+                                       join movie in filmFulDbContext.Movie on action.MovieId equals movie.Id
+                                       where movie.Id == id
+                                       select actor)
+                                           .OrderBy(ac => ac.Name);
+
+            return (movieActors == null || !movieActors.Any()) ? null : DataTypeConversionUtils.ActorToActorDto(movieActors);
+        }
     }
 }

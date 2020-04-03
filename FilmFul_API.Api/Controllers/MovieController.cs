@@ -32,5 +32,17 @@ namespace FilmFul_API.Api.Controllers
             if (movieById == null) { return StatusCode(404); }        
             return Ok(movieById);
         }
+
+        // GET api/5/actors
+        // GET api/movies/5/actors
+        [HttpGet]
+        [Route("{id}/actors")]
+        [Route("movies/{id}/actors")]
+        public IActionResult GetMovieActorsByMovieId(int id)
+        {
+            var movieActors = movieService.GetMovieActorsByMovieId(id);
+            if (movieActors == null) { return StatusCode(404); }
+            return Ok(movieActors);
+        }
     }
 }
