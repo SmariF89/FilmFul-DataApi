@@ -34,12 +34,11 @@ namespace FilmFul_API.Repositories.Repositories
 
         public MovieDto GetMovieById(int id)
         {
-            return DataTypeConversionUtils.MovieToMovieDto
-            (
-                filmFulDbContext.Movie
-                    .Where(m => m.Id == id)
-                    .SingleOrDefault()
-            );
+            var movieById = filmFulDbContext.Movie
+                                .Where(m => m.Id == id)
+                                .SingleOrDefault();
+
+            return movieById == null ? null :  DataTypeConversionUtils.MovieToMovieDto(movieById);
         }
     }
 }

@@ -31,46 +31,37 @@ namespace FilmFul_API.Repositories
 
         public DirectorDto GetDirectorById(int id)
         {
-            return DataTypeConversionUtils.DirectorToDirectorDto
-            (
-                filmFulDbContext.Director
-                    .Where(d => d.Id == id)
-                    .SingleOrDefault()
-            );
+            var directorById = filmFulDbContext.Director
+                                   .Where(d => d.Id == id)
+                                   .SingleOrDefault();
 
-            // TODO: Change implementation as is is done in ActorRepository.GetActorById.
+            return directorById == null ? null : DataTypeConversionUtils.DirectorToDirectorDto(directorById);
         }
         
         public IEnumerable<ActorDto> GetDirectorActorsByDirectorId(int id)
         {
-            return DataTypeConversionUtils.ActorToActorDto
-            (
-                (from actor in filmFulDbContext.Actor
-                    join action in filmFulDbContext.Action on actor.Id equals action.ActorId
-                        join movie in filmFulDbContext.Movie on action.MovieId equals movie.Id
-                            join direction in filmFulDbContext.Direction on movie.Id equals direction.MovieId
-                                join director in filmFulDbContext.Director on direction.DirectorId equals director.Id
-                                where director.Id == id
-                                select actor)
-                                    .Distinct()
-                                    .OrderBy(ac => ac.Name)
-            );
+            var directorActors = (from actor in filmFulDbContext.Actor
+                                    join action in filmFulDbContext.Action on actor.Id equals action.ActorId
+                                        join movie in filmFulDbContext.Movie on action.MovieId equals movie.Id
+                                            join direction in filmFulDbContext.Direction on movie.Id equals direction.MovieId
+                                                join director in filmFulDbContext.Director on direction.DirectorId equals director.Id
+                                                where director.Id == id
+                                                select actor)
+                                                    .Distinct()
+                                                    .OrderBy(ac => ac.Name);
 
-            // TODO: Change implementation as is is done in ActorRepository.GetActorDirectorsByActorId.
+            return (directorActors == null || !directorActors.Any()) ? null : DataTypeConversionUtils.ActorToActorDto(directorActors);
         }
 
-        public MovieDto GetDirectorMoviesByDirectorId(int id)
+        public IEnumerable<MovieDto> GetDirectorMoviesByDirectorId(int id)
         {
-            // This query returns all movies which director with Id == id stars in.
-            var query = (from director in filmFulDbContext.Director
-                         where director.Id == id
-                         join direction in filmFulDbContext.Direction on director.Id equals direction.DirectorId
-                         join movie in filmFulDbContext.Movie on direction.MovieId equals movie.Id
-                         select new { DirectorFilms = movie.Title });
+            var directorMovies = (from director in filmFulDbContext.Director
+                                  join direction in filmFulDbContext.Direction on director.Id equals direction.DirectorId
+                                      join movie in filmFulDbContext.Movie on direction.MovieId equals movie.Id
+                                      where director.Id == id
+                                      select movie);
 
-            foreach (var film in query) { System.Console.WriteLine("MOVIES: " + film.DirectorFilms); }
-
-            return null;
+            return (directorMovies == null || !directorMovies.Any()) ? null : DataTypeConversionUtils.MovieToMovieDto(directorMovies, true);
         }
     }
 }

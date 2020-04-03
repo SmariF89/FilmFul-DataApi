@@ -55,17 +55,13 @@ namespace FilmFul_API.Repositories
 
         public IEnumerable<MovieDto> GetActorMoviesByActorId(int id)
         {
-            return DataTypeConversionUtils.MovieToMovieDto
-            (
-                (from actor in filmFulDbContext.Actor
-                    join action in filmFulDbContext.Action on actor.Id equals action.ActorId
-                        join movie in filmFulDbContext.Movie on action.MovieId equals movie.Id
-                        where actor.Id == id
-                        select movie),
-                true
-            );
+            var actorMovies = (from actor in filmFulDbContext.Actor
+                                   join action in filmFulDbContext.Action on actor.Id equals action.ActorId
+                                       join movie in filmFulDbContext.Movie on action.MovieId equals movie.Id
+                                       where actor.Id == id
+                                       select movie);
 
-            // TODO: Change implementation as is is done in ActorRepository.GetActorDirectorsByActorId.
+            return (actorMovies == null || !actorMovies.Any()) ? null : DataTypeConversionUtils.MovieToMovieDto(actorMovies, true);
         }
     }
 }
