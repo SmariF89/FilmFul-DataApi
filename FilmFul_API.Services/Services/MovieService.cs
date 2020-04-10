@@ -22,5 +22,10 @@ namespace FilmFul_API.Services.Services
         {
             return movieRepository.GetMovieActorsByMovieId(id);
         }
+
+        public IEnumerable<DirectorDto> GetMovieDirectorsByMovieId(int id)
+        {
+            return movieRepository.GetMovieDirectorsByMovieId(id);
+        }
     }
 }

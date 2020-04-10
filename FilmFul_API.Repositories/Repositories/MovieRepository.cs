@@ -52,5 +52,17 @@ namespace FilmFul_API.Repositories.Repositories
 
             return (movieActors == null || !movieActors.Any()) ? null : DataTypeConversionUtils.ActorToActorDto(movieActors);
         }
+
+        public IEnumerable<DirectorDto> GetMovieDirectorsByMovieId(int id)
+        {
+            var movieDirectors = (from director in filmFulDbContext.Director
+                                      join direction in filmFulDbContext.Direction on director.Id equals direction.DirectorId
+                                          join movie in filmFulDbContext.Movie on direction.MovieId equals movie.Id
+                                          where movie.Id == id
+                                          select director)
+                                              .OrderBy(di => di.Name);
+
+            return (movieDirectors == null || !movieDirectors.Any()) ? null : DataTypeConversionUtils.DirectorToDirectorDto(movieDirectors);
+        }
     }
 }

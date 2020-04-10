@@ -21,6 +21,8 @@ namespace FilmFul_API.Api.Controllers
             else { return StatusCode(moviesResult.Item2); }
         }
 
+        // TODO: GetMoviesByGenre(paged)
+
         // GET api/5
         // GET api/movies/5
         [HttpGet]
@@ -45,7 +47,16 @@ namespace FilmFul_API.Api.Controllers
             return Ok(movieActors);
         }
 
-        // TODO: GetMovieDirectorsByMovieId
-        // TODO: GetMovieGenresByMovieId
+        // GET api/5/directors
+        // GET api/movies/5/directors
+        [HttpGet]
+        [Route("{id}/directors")]
+        [Route("movies/{id}/directors")]
+        public IActionResult GetMovieDirectorsByMovieId(int id)
+        {
+            var movieDirectors = movieService.GetMovieDirectorsByMovieId(id);
+            if (movieDirectors == null) { return StatusCode(404); }
+            return Ok(movieDirectors);
+        }
     }
 }

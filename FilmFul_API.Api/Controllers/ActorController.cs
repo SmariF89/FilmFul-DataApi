@@ -30,6 +30,7 @@ namespace FilmFul_API.Api.Controllers
         }
 
         // GET api/actors/5/movies
+        // TODO: Add an optional query parameter for movie genre.
         [HttpGet]
         [Route("{id}/movies")]
         public IActionResult GetActorMoviesByActorId(int id)

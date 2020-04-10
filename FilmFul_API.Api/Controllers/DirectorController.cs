@@ -33,6 +33,7 @@ namespace FilmFul_API.Api.Controllers
 
         // GET api/directors/5/movies
         // Returns all films directed by a certain director.
+        // TODO: Add an optional query parameter for movie genre.
         [HttpGet]
         [Route("{id}/movies")]
         public IActionResult GetDirectorMoviesByDirectorId(int id)
