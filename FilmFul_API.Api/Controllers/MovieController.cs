@@ -44,5 +44,8 @@ namespace FilmFul_API.Api.Controllers
             if (movieActors == null) { return StatusCode(404); }
             return Ok(movieActors);
         }
+
+        // TODO: GetMovieDirectorsByMovieId
+        // TODO: GetMovieGenresByMovieId
     }
 }

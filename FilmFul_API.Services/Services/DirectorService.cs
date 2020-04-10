@@ -18,6 +18,11 @@ namespace FilmFul_API.Services
             return directorRepository.GetDirectorById(id);
         }
 
+        public IEnumerable<MovieDto> GetDirectorMoviesByDirectorId(int id)
+        {
+            return directorRepository.GetDirectorMoviesByDirectorId(id);
+        }
+
         public IEnumerable<ActorDto> GetDirectorActorsByDirectorId(int id)
         {
             return directorRepository.GetDirectorActorsByDirectorId(id);

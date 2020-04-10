@@ -38,6 +38,17 @@ namespace FilmFul_API.Repositories
             return directorById == null ? null : DataTypeConversionUtils.DirectorToDirectorDto(directorById);
         }
         
+        public IEnumerable<MovieDto> GetDirectorMoviesByDirectorId(int id)
+        {
+            var directorMovies = (from director in filmFulDbContext.Director
+                                  join direction in filmFulDbContext.Direction on director.Id equals direction.DirectorId
+                                      join movie in filmFulDbContext.Movie on direction.MovieId equals movie.Id
+                                      where director.Id == id
+                                      select movie);
+
+            return (directorMovies == null || !directorMovies.Any()) ? null : DataTypeConversionUtils.MovieToMovieDto(directorMovies, true);
+        }
+        
         public IEnumerable<ActorDto> GetDirectorActorsByDirectorId(int id)
         {
             var directorActors = (from actor in filmFulDbContext.Actor
@@ -53,15 +64,5 @@ namespace FilmFul_API.Repositories
             return (directorActors == null || !directorActors.Any()) ? null : DataTypeConversionUtils.ActorToActorDto(directorActors);
         }
 
-        public IEnumerable<MovieDto> GetDirectorMoviesByDirectorId(int id)
-        {
-            var directorMovies = (from director in filmFulDbContext.Director
-                                  join direction in filmFulDbContext.Direction on director.Id equals direction.DirectorId
-                                      join movie in filmFulDbContext.Movie on direction.MovieId equals movie.Id
-                                      where director.Id == id
-                                      select movie);
-
-            return (directorMovies == null || !directorMovies.Any()) ? null : DataTypeConversionUtils.MovieToMovieDto(directorMovies, true);
-        }
     }
 }

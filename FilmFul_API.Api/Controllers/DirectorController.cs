@@ -10,6 +10,7 @@ namespace FilmFul_API.Api.Controllers
         private readonly DirectorService directorService = new DirectorService();
 
         // GET api/directors
+        // Returns all directors, paged.
         [HttpGet]
         [Route("")]
         public IActionResult GetAllDirectors([FromQuery] int pageSize = 10, [FromQuery] int pageIndex = 0)
@@ -20,6 +21,7 @@ namespace FilmFul_API.Api.Controllers
         }
 
         // GET api/directors/5
+        // Returns a director by id.
         [HttpGet]
         [Route("{id}")]
         public IActionResult GetDirectorById(int id)
@@ -30,14 +32,18 @@ namespace FilmFul_API.Api.Controllers
         }
 
         // GET api/directors/5/movies
+        // Returns all films directed by a certain director.
         [HttpGet]
         [Route("{id}/movies")]
-        public IActionResult GetDirectorFilmsByDirectorId(int id)
+        public IActionResult GetDirectorMoviesByDirectorId(int id)
         {
-            return StatusCode(404);
+            var directorMovies = directorService.GetDirectorMoviesByDirectorId(id);
+            if (directorMovies == null) { return StatusCode(404); }
+            return Ok(directorMovies);
         }
 
         // GET api/directors/5/actors
+        // Returns all actors affiliated with a certain director.
         [HttpGet]
         [Route("{id}/actors")]
         public IActionResult GetDirectorActorsByDirectorId(int id)
