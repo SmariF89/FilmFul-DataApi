@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace FilmFul_API.Models.Entities
 {
-    public partial class Movie
+    public partial class Movie : IEqualityComparer<Movie>
     {
         public Movie()
         {
@@ -26,5 +27,22 @@ namespace FilmFul_API.Models.Entities
         public virtual ICollection<Action> Action { get; set; }
         public virtual ICollection<Direction> Direction { get; set; }
         public virtual ICollection<Genre> Genre { get; set; }
+
+        public bool Equals(Movie x, Movie y)
+        {
+            //Check if the compared Movie objects (x and y) are null. 
+            if (Object.ReferenceEquals(x, null) || Object.ReferenceEquals(y, null)) { return false; }
+
+            //Check if compared Movie object (x) refers to the same instance as the other (y).
+            if (Object.ReferenceEquals(x, y)) { return true; }
+
+            //Check if the Movies' properties are the same.
+            return x.Id.Equals(y.Id);
+        }
+
+        public int GetHashCode(Movie obj)
+        {
+            return obj.Id.GetHashCode();
+        }
     }
 }

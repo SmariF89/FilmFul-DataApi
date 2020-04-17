@@ -37,6 +37,7 @@ namespace FilmFul_API.Repositories.Extensions
             Title = movie.Title,
             Poster = poster ? movie.Poster : null,
             Description = movie.Description,
+            Genre = movie.Genre.Select(g => g.Genre1),
             Duration = movie.Duration,
             ReleaseYear = movie.ReleaseYear,
             RatingImdb = movie.RatingImdb,
@@ -46,12 +47,13 @@ namespace FilmFul_API.Repositories.Extensions
             VoteCount = movie.VoteCount
         });
 
-        public static MovieDto MovieToMovieDto(Movie movie) => new MovieDto
+        public static MovieDto MovieToMovieDto(Movie movie, IEnumerable<string> movieGenres) => new MovieDto
         {
             Id = movie.Id,
             Title = movie.Title,
             Poster = movie.Poster,
             Description = movie.Description,
+            Genre = movieGenres,
             Duration = movie.Duration,
             ReleaseYear = movie.ReleaseYear,
             RatingImdb = movie.RatingImdb,

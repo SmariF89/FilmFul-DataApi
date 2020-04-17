@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using FilmFul_API.Models.Dtos;
@@ -11,34 +12,47 @@ namespace FilmFul_API.Repositories.Repositories
 
         public (IEnumerable<MovieDto>, int) GetAllMovies(int pageSize, int pageIndex, bool poster)
         {
-            int rangeOkay = Utilities.checkRange(pageSize, pageIndex, filmFulDbContext.Movie.Count());
-            
-            if(rangeOkay == 0)
-            {
-                return (
-                            DataTypeConversionUtils.MovieToMovieDto
-                            (
-                                (
-                                    (from m in filmFulDbContext.Movie
-                                     select m)
-                                        .Skip(pageIndex * pageSize)
-                                        .Take(pageSize)
-                                ),
-                                poster
-                            ), 
-                            rangeOkay
-                        );
-            }
-            else { return (null, rangeOkay); }
+            var moviesAndGenres = 
+            (
+                from movie in filmFulDbContext.Movie
+                    join genre in filmFulDbContext.Genre on movie.Id equals genre.MovieId
+                    select new { movie, genre, movieCount = filmFulDbContext.Movie.Count() }
+            ).ToList();
+
+            int rangeOkay = Utilities.checkRange(pageSize, pageIndex, moviesAndGenres.First().movieCount);
+            if(rangeOkay != 0) { return (null, rangeOkay); }
+
+            foreach (var elem in moviesAndGenres) { elem.movie.Genre.Add(elem.genre); }
+            var moviesWithGenres = moviesAndGenres
+                                   .Select(m => m.movie)
+                                   .Distinct()
+                                   .Skip(pageIndex * pageSize)
+                                   .Take(pageSize);
+
+            return 
+            (
+                DataTypeConversionUtils.MovieToMovieDto(moviesWithGenres, poster),
+                rangeOkay
+            );
         }
 
         public MovieDto GetMovieById(int id)
-        {
-            var movieById = filmFulDbContext.Movie
-                                .Where(m => m.Id == id)
-                                .SingleOrDefault();
+        { 
+            // Get movie genre(s) and movie itself in a single request.
+            var movieAndGenresById = 
+            (
+                from movie in filmFulDbContext.Movie
+                    join genre in filmFulDbContext.Genre on movie.Id equals genre.MovieId
+                    where movie.Id == id
+                    select new { movie, genre.Genre1 }
+            ).ToList();
 
-            return movieById == null ? null :  DataTypeConversionUtils.MovieToMovieDto(movieById);
+            if (movieAndGenresById == null || !movieAndGenresById.Any()) { return null; }
+
+            var movieGenres = movieAndGenresById.Select(g => g.Genre1).ToList();
+            var movieResult = movieAndGenresById.Select(m => m.movie).First();
+
+            return DataTypeConversionUtils.MovieToMovieDto(movieResult, movieGenres);
         }
 
         public IEnumerable<ActorDto> GetMovieActorsByMovieId(int id)

@@ -2,6 +2,11 @@ namespace FilmFul_API.Repositories.Extensions
 {
     public static class Utilities
     {
+        private const int maxPageSize = 100;
+        private const int notFound = 404;
+        private const int payloadTooLarge = 413;
+        private const int badRequest = 400;
+
         // This is a general range-check function which is required to sanity-check all pagings.
         // These include GetAllActors, GetAllDirectors and GetAllMovies.
         public static int checkRange(int pageSize, int pageIndex, int itemCount)
@@ -24,11 +29,11 @@ namespace FilmFul_API.Repositories.Extensions
             //      4: 241  -   250     (10 items)
             int maxIndex = (itemCount % pageSize == 0) ? ((itemCount / pageSize) - 1) : (itemCount / pageSize);
 
-            if      (itemCount == 0)        { return 404; }     // Not found - Resource is empty for some reason.
-            else if (pageSize > 100)        { return 413; }     // Payload too large - Max #items is 100.
+            if      (itemCount == 0)            { return notFound; }        // Not found - Resource is empty for some reason.
+            else if (pageSize > maxPageSize)    { return payloadTooLarge; } // Payload too large - Max #items is 100.
             else if (pageSize < 1 ||
                      pageIndex < 0 || 
-                     pageIndex > maxIndex)  { return 400; }     // Bad request. - Requests that don't make sense.
+                     pageIndex > maxIndex)      { return badRequest; }      // Bad request. - Requests that don't make sense.
 
             return 0;   // Nothing is wrong.
         }

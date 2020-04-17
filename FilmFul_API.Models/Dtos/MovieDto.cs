@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace FilmFul_API.Models.Dtos
 {
     public class MovieDto
@@ -6,6 +8,7 @@ namespace FilmFul_API.Models.Dtos
         public string Title { get; set; }
         public byte[] Poster { get; set; }
         public string Description { get; set; }
+        public IEnumerable<string> Genre { get; set; }
         public int Duration { get; set; }
         public int ReleaseYear { get; set; }
         public float RatingImdb { get; set; }
