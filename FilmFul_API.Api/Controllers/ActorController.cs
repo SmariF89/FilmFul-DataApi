@@ -41,6 +41,7 @@ namespace FilmFul_API.Api.Controllers
         }
 
         // GET api/actors/5/directors
+        // Returns all directors affiliated with a certain actor.
         [HttpGet]
         [Route("{id}/directors")]
         public IActionResult GetActorDirectorsByActorId(int id)
@@ -48,6 +49,17 @@ namespace FilmFul_API.Api.Controllers
             var actorDirectors = actorService.GetActorDirectorsByActorId(id);
             if (actorDirectors == null) { return StatusCode(404); }
             return Ok(actorDirectors);
+        }
+
+        // GET api/actors/5/actors
+        // Returns all actors that have starred in some film(s) with a certain actor.
+        [HttpGet]
+        [Route("{id}/actors")]
+        public IActionResult GetActorActorsByActorId(int id)
+        {
+            var actorActors = actorService.GetActorActorsByActorId(id);
+            if (actorActors == null) { return StatusCode(404); }
+            return Ok(actorActors);
         }
     }
 }

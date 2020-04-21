@@ -63,5 +63,34 @@ namespace FilmFul_API.Repositories
 
             return (actorMovies == null || !actorMovies.Any()) ? null : DataTypeConversionUtils.MovieToMovieDto(actorMovies, true);
         }
+
+        public IEnumerable<ActorDto> GetActorActorsByActorId(int id)
+        {
+            // First, get all movies actor has starred in.
+            var actorMovies = 
+            (
+                from actor in filmFulDbContext.Actor
+                    join action in filmFulDbContext.Action on actor.Id equals action.ActorId
+                        join movie in filmFulDbContext.Movie on action.MovieId equals movie.Id
+                        where actor.Id == id
+                        select movie
+            );
+
+            // If actor has not been in any movie, he must not have ever starred in any film with anyone at all.
+            if (actorMovies == null || !actorMovies.Any()) { return null; }
+
+            // Second, get all actors that appeared in these movies - Excluding the actor in question and avoiding duplicates.
+            var actorActors = 
+            (
+                from actor in filmFulDbContext.Actor
+                    join action in filmFulDbContext.Action on actor.Id equals action.ActorId
+                        join movie in actorMovies on action.MovieId equals movie.Id
+                        where actor.Id != id
+                        select actor
+            ).Distinct();
+
+            // If actor has never worked with other actors return null, else return actors.
+            return (actorActors == null || !actorActors.Any()) ? null : DataTypeConversionUtils.ActorToActorDto(actorActors);
+        }
     }
 }

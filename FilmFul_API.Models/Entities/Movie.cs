@@ -36,7 +36,7 @@ namespace FilmFul_API.Models.Entities
             //Check if compared Movie object (x) refers to the same instance as the other (y).
             if (Object.ReferenceEquals(x, y)) { return true; }
 
-            //Check if the Movies' properties are the same.
+            //Check if the Movies' Ids are the same.
             return x.Id.Equals(y.Id);
         }
 

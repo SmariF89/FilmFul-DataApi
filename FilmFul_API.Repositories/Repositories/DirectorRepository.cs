@@ -64,5 +64,33 @@ namespace FilmFul_API.Repositories
             return (directorActors == null || !directorActors.Any()) ? null : DataTypeConversionUtils.ActorToActorDto(directorActors);
         }
 
+        public IEnumerable<DirectorDto> GetDirectorDirectorsByDirectorId(int id)
+        {
+            // First, get all movies director has directed.
+            var directorMovies = 
+            (
+                from director in filmFulDbContext.Director
+                    join direction in filmFulDbContext.Direction on director.Id equals direction.DirectorId
+                        join movie in filmFulDbContext.Movie on direction.MovieId equals movie.Id
+                        where director.Id == id
+                        select movie
+            );
+
+            // If director has not directed any movie, he must not have ever co-directed any film with anyone at all.
+            if (directorMovies == null || !directorMovies.Any()) { return null; }
+
+            // Second, get all directors that co-directed these movies - Excluding the director in question and avoiding duplicates.
+            var directorDirectors = 
+            (
+                from director in filmFulDbContext.Director
+                    join direction in filmFulDbContext.Direction on director.Id equals direction.DirectorId
+                        join movie in directorMovies on direction.MovieId equals movie.Id
+                        where director.Id != id
+                        select director
+            ).Distinct();
+
+            // If director has never worked with other directors return null, else return directors.
+            return (directorDirectors == null || !directorDirectors.Any()) ? null : DataTypeConversionUtils.DirectorToDirectorDto(directorDirectors);
+        }
     }
 }

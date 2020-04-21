@@ -53,5 +53,16 @@ namespace FilmFul_API.Api.Controllers
             if (directorActors == null) { return StatusCode(404); }
             return Ok(directorActors);
         }
+
+        // GET api/directors/5/directors
+        // Returns all directors that have co-directed some film(s) with a certain director.
+        [HttpGet]
+        [Route("{id}/directors")]
+        public IActionResult GetDirectorDirectorsByDirectorId(int id)
+        {
+            var directorDirectors = directorService.GetDirectorDirectorsByDirectorId(id);
+            if (directorDirectors == null) { return StatusCode(404); }
+            return Ok(directorDirectors);
+        }
     }
 }
