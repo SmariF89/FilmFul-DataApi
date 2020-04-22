@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using FilmFul_API.Services.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,14 +15,12 @@ namespace FilmFul_API.Api.Controllers
         [HttpGet]
         [Route("")]
         [Route("movies")]
-        public IActionResult GetAllMovies([FromQuery] int pageSize = 10, [FromQuery] int pageIndex = 0, [FromQuery] bool poster = false)
+        public IActionResult GetAllMovies([FromQuery] int pageSize = 10, [FromQuery] int pageIndex = 0, [FromQuery] bool poster = false, [FromQuery] List<string> genres = null)
         {
-            var moviesResult = movieService.GetAllMovies(pageSize, pageIndex, poster);
+            var moviesResult = movieService.GetAllMovies(pageSize, pageIndex, poster, genres);
             if (moviesResult.Item2 == 0) { return Ok(moviesResult.Item1); }
             else { return StatusCode(moviesResult.Item2); }
         }
-
-        // TODO: GetMoviesByGenre(paged)
 
         // GET api/5
         // GET api/movies/5

@@ -10,7 +10,7 @@ namespace FilmFul_API.Repositories.Repositories
     {
         private readonly FilmFulDbContext filmFulDbContext = new FilmFulDbContext();
 
-        public (IEnumerable<MovieDto>, int) GetAllMovies(int pageSize, int pageIndex, bool poster)
+        public (IEnumerable<MovieDto>, int) GetAllMovies(int pageSize, int pageIndex, bool poster, List<string> genres)
         {
             var moviesAndGenres = 
             (
