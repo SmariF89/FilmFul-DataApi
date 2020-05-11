@@ -2,7 +2,7 @@ namespace FilmFul_API.Repositories.Extensions
 {
     public static class Utilities
     {
-        private const int maxPageSize = 250;
+        private const int maxPageSize = 100;
         private const int notFound = 404;
         private const int payloadTooLarge = 413;
         private const int badRequest = 400;
