@@ -37,7 +37,7 @@ namespace FilmFul_API.Services.Services
         private const int badRequest = 400;
 
         // User input sanitization - This function capitalizes genre strings from the query parameters
-        // such that they will match they way they are capitalized in the database.
+        // such that they will match the way they are capitalized in the database.
         private string correctGenreCaps(string genre)
         {
             if (genre.Contains('-'))
@@ -72,11 +72,22 @@ namespace FilmFul_API.Services.Services
             // Genre query parameter not provided - That is okay.
             if (genres == null) { return true; }
 
+            // This list will contain the genres with fixed capitalization.
+            List<string> genresFixed = new List<string>();
+
             // If some string in genres is not a key in the validGenres HashSet, we have a bad request.
             foreach (string genre in genres)
             {
-                if (!validGenres.Contains(correctGenreCaps(genre))) { return false; }
+                string genreFixed = correctGenreCaps(genre);
+                if (!validGenres.Contains(genreFixed)) { return false; }
+                genresFixed.Add(genreFixed);
             }
+
+            // If we get here, all genre capitalization has been corrected and the genres are present
+            // in the validGenres HashSet. The original genres list is emptied and filled with the corrected genres.
+            genres.Clear();
+            genres.AddRange(genresFixed);
+
             return true;
         }
 

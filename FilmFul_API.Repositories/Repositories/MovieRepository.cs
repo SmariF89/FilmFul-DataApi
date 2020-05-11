@@ -22,17 +22,24 @@ namespace FilmFul_API.Repositories.Repositories
             int rangeOkay = Utilities.checkRange(pageSize, pageIndex, moviesAndGenres.First().movieCount);
             if(rangeOkay != 0) { return (null, rangeOkay); }
 
-            foreach (var elem in moviesAndGenres) { elem.movie.Genre.Add(elem.genre); }
             var moviesWithGenres = moviesAndGenres
                                    .Select(m => m.movie)
                                    .Distinct()
                                    .Skip(pageIndex * pageSize)
                                    .Take(pageSize);
 
-            return 
+            // At this point the selected range (page) of films has been gathered. 
+            // If genres contains list of valid genres, the selected range is filtered for movies
+            // which are of the genres present in the genres list. The sanitization of the input
+            // genre list happens in the Movie service layer.
+            return
             (
-                DataTypeConversionUtils.MovieToMovieDto(moviesWithGenres, poster),
-                rangeOkay
+                DataTypeConversionUtils.MovieToMovieDto
+                    (genres != null ?
+                        moviesWithGenres.Where(m => !genres.Except(m.Genre.Select(g => g.Genre1)).Any()) :      // Movies where the genres list is a subset of each movie's genre list.
+                        moviesWithGenres,                                                                       // No genre filtering.
+                        poster),                                                                                // Denotes whether to return the poster or not.
+                rangeOkay                                                                                       // Code whether the pagination was a success. Should be 0.
             );
         }
 
