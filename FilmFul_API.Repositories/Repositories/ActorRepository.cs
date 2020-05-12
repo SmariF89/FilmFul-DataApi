@@ -63,19 +63,22 @@ namespace FilmFul_API.Repositories
                                            select new  { movie, genre }
                               ).ToList();
 
+            if (actorMovies == null || !actorMovies.Any()) { return (null, Utilities.notFound); }                   // Actor has not starred in any film.
+
             var actorMoviesWithGenres = actorMovies
                                             .Select(m => m.movie)
                                             .Distinct();
 
-            return (actorMovies == null || !actorMovies.Any()) ?
-                       (null, Utilities.notFound) :                                                                         // Actor has not starred in any film.
-                       (
-                           (DataTypeConversionUtils.MovieToMovieDto(genres != null ?
-                               actorMoviesWithGenres.Where(m => !genres.Except(m.Genre.Select(g => g.Genre1)).Any()) :      // Movies where the genres list is a subset of each movie's genre list.
-                               actorMoviesWithGenres,                                                                       // No genre filtering
-                               true)),                                                                                      // Denotes whether to return the poster or not. Always true in this instance. (May be changed later)
-                            Utilities.ok                                                                                    // Code whether the data fetching was a success. Should be 200 (ok).
-                       );
+            return
+            (
+                (
+                    DataTypeConversionUtils.MovieToMovieDto(genres != null ?
+                        actorMoviesWithGenres.Where(m => !genres.Except(m.Genre.Select(g => g.Genre1)).Any()) :     // Movies where the genres list is a subset of each movie's genre list.
+                        actorMoviesWithGenres,                                                                      // No genre filtering
+                    true)
+                ),                                                                                                  // Denotes whether to return the poster or not. Always true in this instance. (May be changed later)
+                Utilities.ok                                                                                        // Code whether the data fetching was a success. Should be 200 (ok).
+            );
         }
 
         public IEnumerable<ActorDto> GetActorActorsByActorId(int id)

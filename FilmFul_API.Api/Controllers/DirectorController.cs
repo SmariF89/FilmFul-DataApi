@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using FilmFul_API.Repositories.Extensions;
 using FilmFul_API.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -37,11 +38,11 @@ namespace FilmFul_API.Api.Controllers
         // TODO: Add an optional query parameter for movie genre.
         [HttpGet]
         [Route("{id}/movies")]
-        public IActionResult GetDirectorMoviesByDirectorId(int id)
+        public IActionResult GetDirectorMoviesByDirectorId(int id, [FromQuery] List<string> genres = null)
         {
-            var directorMovies = directorService.GetDirectorMoviesByDirectorId(id);
-            if (directorMovies == null) { return StatusCode(404); }
-            return Ok(directorMovies);
+            var directorMovies = directorService.GetDirectorMoviesByDirectorId(id, genres);
+            if (directorMovies.Item1 == null) { return StatusCode(directorMovies.Item2); }
+            return Ok(directorMovies.Item1);
         }
 
         // GET api/directors/5/actors

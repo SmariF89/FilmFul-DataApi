@@ -38,15 +38,32 @@ namespace FilmFul_API.Repositories
             return directorById == null ? null : DataTypeConversionUtils.DirectorToDirectorDto(directorById);
         }
         
-        public IEnumerable<MovieDto> GetDirectorMoviesByDirectorId(int id)
+        public (IEnumerable<MovieDto>, int) GetDirectorMoviesByDirectorId(int id, List<string> genres)
         {
             var directorMovies = (from director in filmFulDbContext.Director
-                                  join direction in filmFulDbContext.Direction on director.Id equals direction.DirectorId
-                                      join movie in filmFulDbContext.Movie on direction.MovieId equals movie.Id
-                                      where director.Id == id
-                                      select movie);
+                                    join direction in filmFulDbContext.Direction on director.Id equals direction.DirectorId
+                                        join movie in filmFulDbContext.Movie on direction.MovieId equals movie.Id
+                                            join genre in filmFulDbContext.Genre on movie.Id equals genre.MovieId
+                                            where director.Id == id
+                                            select new { movie, genre }
+                                 ).ToList();
 
-            return (directorMovies == null || !directorMovies.Any()) ? null : DataTypeConversionUtils.MovieToMovieDto(directorMovies, true);
+            if (directorMovies == null || !directorMovies.Any()) { return (null, Utilities.notFound); }             // Director has not directed any film.
+            
+            var directorMoviesWithGenres = directorMovies
+                                               .Select(m => m.movie)
+                                               .Distinct();
+
+            return
+            (
+                (
+                    DataTypeConversionUtils.MovieToMovieDto(genres != null ?
+                        directorMoviesWithGenres.Where(m => !genres.Except(m.Genre.Select(g => g.Genre1)).Any()) :      // Movies where the genres list is a subset of each movie's genre list.
+                        directorMoviesWithGenres,                                                                       // No genre filtering
+                    true)
+                ),                                                                                                  // Denotes whether to return the poster or not. Always true in this instance. (May be changed later)
+                Utilities.ok                                                                                        // Code whether the data fetching was a success. Should be 200 (ok).
+            );
         }
         
         public IEnumerable<ActorDto> GetDirectorActorsByDirectorId(int id)
