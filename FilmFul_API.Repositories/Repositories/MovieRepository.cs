@@ -20,7 +20,7 @@ namespace FilmFul_API.Repositories.Repositories
             ).ToList();
 
             int rangeOkay = Utilities.checkRange(pageSize, pageIndex, moviesAndGenres.First().movieCount);
-            if(rangeOkay != 0) { return (null, rangeOkay); }
+            if(rangeOkay != Utilities.ok) { return (null, rangeOkay); }
 
             var moviesWithGenres = moviesAndGenres
                                    .Select(m => m.movie)
@@ -39,7 +39,7 @@ namespace FilmFul_API.Repositories.Repositories
                         moviesWithGenres.Where(m => !genres.Except(m.Genre.Select(g => g.Genre1)).Any()) :      // Movies where the genres list is a subset of each movie's genre list.
                         moviesWithGenres,                                                                       // No genre filtering.
                         poster),                                                                                // Denotes whether to return the poster or not.
-                rangeOkay                                                                                       // Code whether the pagination was a success. Should be 0.
+                rangeOkay                                                                                       // Code whether the pagination was a success. Should be 200 (ok).
             );
         }
 

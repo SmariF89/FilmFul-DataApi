@@ -1,11 +1,15 @@
+using System.Collections.Generic;
+using System.Linq;
+
 namespace FilmFul_API.Repositories.Extensions
 {
     public static class Utilities
     {
-        private const int maxPageSize = 100;
-        private const int notFound = 404;
-        private const int payloadTooLarge = 413;
-        private const int badRequest = 400;
+        public const int maxPageSize = 100;
+        public const int notFound = 404;
+        public const int payloadTooLarge = 413;
+        public const int badRequest = 400;
+        public const int ok = 200;
 
         // This is a general range-check function which is required to sanity-check all pagings.
         // These include GetAllActors, GetAllDirectors and GetAllMovies.
@@ -35,7 +39,87 @@ namespace FilmFul_API.Repositories.Extensions
                      pageIndex < 0 || 
                      pageIndex > maxIndex)      { return badRequest; }      // Bad request. - Requests that don't make sense.
 
-            return 0;   // Nothing is wrong.
+            return ok;   // Nothing is wrong.
+        }
+
+        private static readonly HashSet<string> validGenres = new HashSet<string>
+        {
+            "Action",
+            "Adventure",
+            "Animation",
+            "Biography",
+            "Comedy",
+            "Crime",
+            "Drama",
+            "Family",
+            "Fantasy",
+            "Film-Noir",
+            "History",
+            "Horror",
+            "Music",
+            "Musical",
+            "Mystery",
+            "Romance",
+            "Sci-Fi",
+            "Sport",
+            "Thriller",
+            "War",
+            "Western"
+        };
+
+        // User input sanitization - This function capitalizes genre strings from the query parameters
+        // such that they will match the way they are capitalized in the database.
+        private static string correctGenreCaps(string genre)
+        {
+            if (genre.Contains('-'))
+            {
+                List<string> strSep = genre.Trim()
+                                           .ToLower()
+                                           .Split('-')
+                                           .ToList()
+                                           .Aggregate
+                                           (
+                                                new List<string>(), (lis, s) =>
+                                                {
+                                                    s = s.First().ToString().ToUpper() + s.Substring(1);
+                                                    lis.Add(s);
+                                                    return lis;
+                                                }
+                                           );
+                
+                genre = string.Join('-', strSep);
+            }
+            else
+            {
+                genre = genre.Trim().ToLower();
+                genre = genre.First().ToString().ToUpper() + genre.Substring(1);
+            }
+
+            return genre;
+        }
+
+        public static bool genresOkay(ref List<string> genres)
+        {
+            // Genre query parameter not provided - That is okay.
+            if (genres == null) { return true; }
+
+            // This list will contain the genres with fixed capitalization.
+            List<string> genresFixed = new List<string>();
+
+            // If some string in genres is not a key in the validGenres HashSet, we have a bad request.
+            foreach (string genre in genres)
+            {
+                string genreFixed = correctGenreCaps(genre);
+                if (!validGenres.Contains(genreFixed)) { return false; }
+                genresFixed.Add(genreFixed);
+            }
+
+            // If we get here, all genre capitalization has been corrected and the genres are present
+            // in the validGenres HashSet. The original genres list is emptied and filled with the corrected genres.
+            genres.Clear();
+            genres.AddRange(genresFixed);
+
+            return true;
         }
     }
 }

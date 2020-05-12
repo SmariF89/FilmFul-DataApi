@@ -13,7 +13,7 @@ namespace FilmFul_API.Repositories
         {
             int rangeOkay = Utilities.checkRange(pageSize, pageIndex, filmFulDbContext.Actor.Count());
             
-            if(rangeOkay == 0)
+            if(rangeOkay == Utilities.ok)
             {
                 return (
                             DataTypeConversionUtils.ActorToActorDto
@@ -53,15 +53,29 @@ namespace FilmFul_API.Repositories
             return (actorDirectors == null || !actorDirectors.Any()) ? null : DataTypeConversionUtils.DirectorToDirectorDto(actorDirectors);
         }
 
-        public IEnumerable<MovieDto> GetActorMoviesByActorId(int id)
+        public (IEnumerable<MovieDto>, int) GetActorMoviesByActorId(int id, List<string> genres)
         {
             var actorMovies = (from actor in filmFulDbContext.Actor
                                    join action in filmFulDbContext.Action on actor.Id equals action.ActorId
                                        join movie in filmFulDbContext.Movie on action.MovieId equals movie.Id
-                                       where actor.Id == id
-                                       select movie);
+                                           join genre in filmFulDbContext.Genre on movie.Id equals genre.MovieId
+                                           where actor.Id == id
+                                           select new  { movie, genre }
+                              ).ToList();
 
-            return (actorMovies == null || !actorMovies.Any()) ? null : DataTypeConversionUtils.MovieToMovieDto(actorMovies, true);
+            var actorMoviesWithGenres = actorMovies
+                                            .Select(m => m.movie)
+                                            .Distinct();
+
+            return (actorMovies == null || !actorMovies.Any()) ?
+                       (null, Utilities.notFound) :                                                                         // Actor has not starred in any film.
+                       (
+                           (DataTypeConversionUtils.MovieToMovieDto(genres != null ?
+                               actorMoviesWithGenres.Where(m => !genres.Except(m.Genre.Select(g => g.Genre1)).Any()) :      // Movies where the genres list is a subset of each movie's genre list.
+                               actorMoviesWithGenres,                                                                       // No genre filtering
+                               true)),                                                                                      // Denotes whether to return the poster or not. Always true in this instance. (May be changed later)
+                            Utilities.ok                                                                                    // Code whether the data fetching was a success. Should be 200 (ok).
+                       );
         }
 
         public IEnumerable<ActorDto> GetActorActorsByActorId(int id)

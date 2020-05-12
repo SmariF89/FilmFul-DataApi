@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using FilmFul_API.Models.Dtos;
 using FilmFul_API.Repositories;
+using FilmFul_API.Repositories.Extensions;
 
 namespace FilmFul_API.Services
 {
@@ -18,9 +19,10 @@ namespace FilmFul_API.Services
             return actorRepository.GetActorById(id);
         }
 
-        public IEnumerable<MovieDto> GetActorMoviesByActorId(int id)
+        public (IEnumerable<MovieDto>, int) GetActorMoviesByActorId(int id, List<string> genres)
         {
-            return actorRepository.GetActorMoviesByActorId(id);
+            if (!Utilities.genresOkay(ref genres)) { return (null, Utilities.badRequest); }
+            return actorRepository.GetActorMoviesByActorId(id, genres);
         }
 
         public IEnumerable<DirectorDto> GetActorDirectorsByActorId(int id)

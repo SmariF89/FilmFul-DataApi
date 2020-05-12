@@ -1,3 +1,4 @@
+using FilmFul_API.Repositories.Extensions;
 using FilmFul_API.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,7 +17,7 @@ namespace FilmFul_API.Api.Controllers
         public IActionResult GetAllDirectors([FromQuery] int pageSize = 10, [FromQuery] int pageIndex = 0)
         {
             var directorsResult = directorService.GetAllDirectors(pageSize, pageIndex);
-            if (directorsResult.Item2 == 0) { return Ok(directorsResult.Item1); }
+            if (directorsResult.Item2 == Utilities.ok) { return Ok(directorsResult.Item1); }
             else { return StatusCode(directorsResult.Item2); }
         }
 

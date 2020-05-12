@@ -13,7 +13,7 @@ namespace FilmFul_API.Repositories
         {
             int rangeOkay = Utilities.checkRange(pageSize, pageIndex, filmFulDbContext.Director.Count());
             
-            if(rangeOkay == 0)
+            if(rangeOkay == Utilities.ok)
             {
                 return (
                             DataTypeConversionUtils.DirectorToDirectorDto

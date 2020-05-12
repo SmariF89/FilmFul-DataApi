@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using FilmFul_API.Repositories.Extensions;
 using FilmFul_API.Services.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,7 +19,7 @@ namespace FilmFul_API.Api.Controllers
         public IActionResult GetAllMovies([FromQuery] int pageSize = 10, [FromQuery] int pageIndex = 0, [FromQuery] bool poster = false, [FromQuery] List<string> genres = null)
         {
             var moviesResult = movieService.GetAllMovies(pageSize, pageIndex, poster, genres);
-            if (moviesResult.Item2 == 0) { return Ok(moviesResult.Item1); }
+            if (moviesResult.Item2 == Utilities.ok) { return Ok(moviesResult.Item1); }
             else { return StatusCode(moviesResult.Item2); }
         }
 
