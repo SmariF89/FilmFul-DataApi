@@ -42,8 +42,22 @@ namespace FilmFul_API.Api.Controllers
         }
 
         // GET api/actors/5
+        /// <summary>
+        /// Gets an actor by a consumer-supplied id.
+        /// </summary>
+        /// <remarks>
+        /// Sample requests:&#xD;
+        ///     http://URL:&lt;port&gt;/api/actors/12
+        ///     http://URL:&lt;port&gt;/api/actors/55
+        /// </remarks>
+        /// <param name="id" example="55">The id of the actor which is to be fetched.</param>
+        /// <returns>A single actor data-transfer object with an id matching the supplied one.</returns>
+        /// <response code="200" example="">Upon success. Returns the requested actor.</response>
+        /// <response code="400" example="">If the supplied id is not an integer.</response>
+        /// <response code="404" example="">If an actor with the supplied id is not present in the database.</response>
         [HttpGet]
         [Route("{id}")]
+        [ProducesResponseType(typeof(ActorDto), StatusCodes.Status200OK)]
         public IActionResult GetActorById(int id)
         {
             var actorById = actorService.GetActorById(id);

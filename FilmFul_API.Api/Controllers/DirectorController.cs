@@ -42,9 +42,22 @@ namespace FilmFul_API.Api.Controllers
         }
 
         // GET api/directors/5
-        // Returns a director by id.
+        /// <summary>
+        /// Gets a director by a consumer-supplied id.
+        /// </summary>
+        /// <remarks>
+        /// Sample requests:&#xD;
+        ///     http://URL:&lt;port&gt;/api/directors/13
+        ///     http://URL:&lt;port&gt;/api/directors/36
+        /// </remarks>
+        /// <param name="id" example="36">The id of the director which is to be fetched.</param>
+        /// <returns>A single director data-transfer object with an id matching the supplied one.</returns>
+        /// <response code="200" example="">Upon success. Returns the requested director.</response>
+        /// <response code="400" example="">If the supplied id is not an integer.</response>
+        /// <response code="404" example="">If a director with the supplied id is not present in the database.</response>
         [HttpGet]
         [Route("{id}")]
+        [ProducesResponseType(typeof(DirectorDto), StatusCodes.Status200OK)]
         public IActionResult GetDirectorById(int id)
         {
             var directorById = directorService.GetDirectorById(id);
